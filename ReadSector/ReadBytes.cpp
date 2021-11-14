@@ -19,7 +19,15 @@ int HexToDecimal(string hex)
     }
     return dec;
 }
-
+string Uppercase(string s)
+{
+    string result = "";
+    for (int i = 0; i < s.length(); i++)
+    {
+        result += toupper(s[i]);
+    }
+    return result;
+}
 int ReadBytes(string offset, int numByte, BYTE sector[512])
 {
     int start = HexToDecimal(offset);
@@ -30,5 +38,6 @@ int ReadBytes(string offset, int numByte, BYTE sector[512])
         ss << setfill('0') << setw(2) << hex << (0xff & (unsigned int)sector[i]);
         s += ss.str();
     }
-	return HexToDecimal(s);
+    cout << Uppercase(s) << endl;    
+	return HexToDecimal(Uppercase(s));
 }
