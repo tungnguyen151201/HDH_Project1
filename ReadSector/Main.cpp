@@ -11,8 +11,7 @@ int main(int argc, char** argv)
     cout << "Kich thuoc mot sector: " << ReadBytes("B", 2, sector) << endl;
     cout << "So sector trong mot cluster: " << ReadBytes("D", 1, sector) << endl;
     cout << "Cluster bat dau cua MFT: " << ReadBytes("30", 8, sector) << endl;
-    cout << "MFT:" << endl;
-    ReadSector(drive, ReadBytes("30", 8, sector) * 512, sector); //đọc sector thứ x
+    ReadSector(drive, ReadBytes("30", 8, sector) * 512, sector); //Sector đầu tiên của MFT
     PrintSector(sector);
     return 0;
 }

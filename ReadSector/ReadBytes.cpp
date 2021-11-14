@@ -37,7 +37,6 @@ int ReadBytes(string offset, int numByte, BYTE sector[512])
         stringstream ss;
         ss << setfill('0') << setw(2) << hex << (0xff & (unsigned int)sector[i]);
         s += ss.str();
-    }
-    cout << Uppercase(s) << endl;    
+    }  
 	return HexToDecimal(Uppercase(s));
 }
