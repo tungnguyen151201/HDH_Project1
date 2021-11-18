@@ -40,8 +40,27 @@ struct Attribute
 };
 struct MFTEntry
 {
+	int id;
 	int type; //0: tập tin đã xóa, 1: tập tin được cấp phát, 2: thư mục đã xóa, 3: thư mục được cấp phát
 	BYTE sector1[512]; //nửa entry đầu
 	BYTE sector2[512]; //nửa entry cuối
 	vector<Attribute> attributes; //danh sách các Attribute
+};
+struct File
+{
+	int id;
+	string name;
+	int size;
+	string data;
+	int parentIndex;
+	bool isPrinted;
+};
+struct Folder
+{
+	int id;
+	string name;
+	vector<File> child;
+	vector<Folder> folderchild;
+	int parentIndex;
+	bool isPrinted;
 };

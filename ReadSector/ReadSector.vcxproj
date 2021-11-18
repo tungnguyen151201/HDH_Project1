@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Attribute.cpp" />
+    <ClCompile Include="File.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MFTEntry.cpp" />
     <ClCompile Include="NTFS.cpp" />
@@ -150,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Attribute.h" />
+    <ClInclude Include="File.h" />
     <ClInclude Include="Libraries.h" />
     <ClInclude Include="MFTEntry.h" />
     <ClInclude Include="NTFS.h" />

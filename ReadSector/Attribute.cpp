@@ -1,4 +1,5 @@
 ﻿#include "Attribute.h"
+#include <Windows.h>
 vector<Attribute> ReadAttributes(MFTEntry mftentry, int startAttr, LPCWSTR drive)
 {
     vector<Attribute> attributes;
@@ -9,7 +10,8 @@ vector<Attribute> ReadAttributes(MFTEntry mftentry, int startAttr, LPCWSTR drive
     }
     for (int i = 513; i < 1024; i++)
     {
-        entry[i] = mftentry.sector2[i];
+        int j = i - 513;
+        entry[i] = mftentry.sector2[j];
     }
     Attribute attribute;
     attribute.startIndex = startAttr;
@@ -40,7 +42,10 @@ vector<Attribute> ReadAttributes(MFTEntry mftentry, int startAttr, LPCWSTR drive
                 {
                     attribute.Data.content = ReadValueAttributeBytes(attribute.startContentIndex, attribute.contentSize, array);
                 }
-                else attribute.Data.content = ReadDataNonResident(startAttr, array, attribute.type, drive);               
+                else
+                {
+                    attribute.Data.content = ReadDataNonResident(startAttr, array, attribute.type, drive, attribute.contentSize);
+                }
             }
         }
         else if (attribute.type == 176) //BITMAP
@@ -63,11 +68,12 @@ vector<Attribute> ReadAttributes(MFTEntry mftentry, int startAttr, LPCWSTR drive
     }
     return attributes;
 }
-string ReadDataNonResident(int startAttr, BYTE attribute[1024], int typeAttribute, LPCWSTR drive)
+string ReadDataNonResident(int startAttr, BYTE attribute[1024], int typeAttribute, LPCWSTR drive, int& fileSize)
 {
-    stringstream ss;
+    string s = "";
     BYTE sector[512];
-    int indexDataRun = 64; //Data Run đầu tiên
+    fileSize = ReadAttributeBytes(48, 8, attribute);
+    int indexDataRun = ReadAttributeBytes(32, 2, attribute); //Data Run đầu tiên
     string firstByte = ReadHexAttributeBytes(indexDataRun, 1, attribute);
     int firstHaftByte = firstByte[0] - '0';
     int secondHaftByte = firstByte[1] - '0';
@@ -80,7 +86,7 @@ string ReadDataNonResident(int startAttr, BYTE attribute[1024], int typeAttribut
             for (int i = 0; i < sizeOfDataBlock * 8; i++)
             {
                 ReadSector(drive, readPointData + (__int64)i * (__int64)512, sector);
-                ss << ReadValueBytes("0", 512, sector);
+                s += ReadValueBytes("0", 512, sector);
             }
         }
         indexDataRun += firstHaftByte + secondHaftByte + 1;
@@ -88,12 +94,12 @@ string ReadDataNonResident(int startAttr, BYTE attribute[1024], int typeAttribut
         firstHaftByte = firstByte[0] - '0';
         secondHaftByte = firstByte[1] - '0';
     }
-    return ss.str();
+    return s;
 }
 int ReadBitmapNonResident(int startAttr, BYTE attribute[1024], int typeAttribute, LPCWSTR drive)
 {
     string bitmap = "";
-    BYTE sector[512], sector1[512], sector2[512];
+    BYTE sector[512];
     int indexDataRun = 64; //Data Run đầu tiên
     string firstByte = ReadHexAttributeBytes(indexDataRun, 1, attribute);
     int firstHaftByte = firstByte[0] - '0';
@@ -144,7 +150,9 @@ void PrintAttributes(vector<Attribute> attributes, MFTEntry entry)
         {
             if (attributes[i].FileName.filename[0] != '$' && attributes[i].FileName.filename != "" && entry.type == 1)
             {
-                cout << "DATA: " << attributes[i].Data.content << endl;
+                SetConsoleOutputCP(65001);
+                cout << "Data: " << attributes[i].Data.content << endl;
+                cout << "File size: " << attributes[i].contentSize << endl;
             }
         }
     }
