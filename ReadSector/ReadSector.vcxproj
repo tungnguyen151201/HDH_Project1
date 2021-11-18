@@ -139,14 +139,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Attribute.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MFTEntry.cpp" />
+    <ClCompile Include="NTFS.cpp" />
+    <ClCompile Include="BPB.cpp" />
     <ClCompile Include="ReadBytes.cpp" />
+    <ClCompile Include="MFT.cpp" />
     <ClCompile Include="ReadSector.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Attribute.h" />
     <ClInclude Include="Libraries.h" />
+    <ClInclude Include="MFTEntry.h" />
+    <ClInclude Include="NTFS.h" />
+    <ClInclude Include="BPB.h" />
     <ClInclude Include="ReadBytes.h" />
+    <ClInclude Include="MFT.h" />
     <ClInclude Include="ReadSecor.h" />
+    <ClInclude Include="Struct.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
