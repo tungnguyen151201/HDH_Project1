@@ -34,12 +34,8 @@ string ToString(vector<__int64> sectors)
 }
 void PrintFile(File file)
 {
-    cout << "Ten tap tin: " << file.name << " | Kich thuoc: " << file.size << endl;
+    cout << "Id: " << file.id << " | Ten tap tin: " << file.name << " | Kich thuoc: " << file.size << endl;
     cout << "Cac sector luu tru: " << ToString(file.sectors) << endl;
-    cout << "Noi dung tap tin: ";
-    if (GetFileNameExtendsion(file.name) == "txt") cout << file.data << endl;
-    else cout << "Day khong phai file text.\n";
-    cout << "-------------------------------------------------" << endl;
 }
 void ReadFolder(Folder& folder, MFTEntry entry)
 {
@@ -80,17 +76,16 @@ void PrintFolder(Folder folder)
     for (int i = 0; i < folder.folderchild.size(); i++)
     {
         PrintFolder(folder.folderchild[i]);
+        cout << "-------------------------------------------------" << endl;
     }
     for (int i = 0; i < folder.child.size(); i++)
     {
         PrintFile(folder.child[i]);
-    }
-    cout << "-------------------------------------------------" << endl;
+        cout << "-------------------------------------------------" << endl;
+    }   
 }
-void PrintFolderTree(vector<MFTEntry> entries)
+void PrintRootFolder(vector<MFTEntry> entries, vector<File>& files, vector<Folder>& folders)
 {
-    vector<File> files;
-    vector<Folder> folders;
     for (int i = 0; i < entries.size(); i++)
     {  
         File file;
@@ -111,7 +106,36 @@ void PrintFolderTree(vector<MFTEntry> entries)
     for (int i = 0; i < folders.size(); i++)
     {
         ReadChildFolder(folders[i], files);
-        ReadFolderChild(folders[i], folders);
-        PrintFolder(folders[i]);
+        ReadFolderChild(folders[i], folders);       
     }
+    PrintFolder(folders[0]);
+    cout << "=================================================" << endl;
+}
+void AccessFolder(int id, vector<Folder> folders)
+{
+    for (int i = 0; i < folders.size(); i++)
+    {
+        if (folders[i].id == id)
+        {
+            PrintFolder(folders[i]);
+            return;
+        }
+    }
+    cout << "Khong tim thay thu muc" << endl;
+}
+void AccessFile(int id, vector<File> files)
+{
+    for (int i = 0; i < files.size(); i++)
+    {
+        if (files[i].id == id)
+        {
+            PrintFile(files[i]);
+            cout << "Noi dung tap tin: ";
+            if (GetFileNameExtendsion(files[i].name) == "txt") cout << files[i].data << endl;
+            else cout << "Day khong phai file text.\n";
+            cout << "-------------------------------------------------" << endl;
+            return;
+        }
+    }
+    cout << "Khong tim thay tap tin" << endl;
 }

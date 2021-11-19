@@ -33,6 +33,34 @@ void ReadNTFS(LPCWSTR drive, BYTE sector[512])
         /*PrintMFTEntry(entry);
         cout << endl;*/
     }
-    PrintFolderTree(entries);
+    vector<File> files;
+    vector<Folder> folders;
+    PrintRootFolder(entries, files, folders);
+    char c;
+    while (1)
+    {
+        cout << "Truy xuat thu muc (0), truy xuat tap tin (1), thoat (ESC):\n";
+        c = _getch();
+        int n = c;
+        if (c == '1')
+        {
+            int id;
+            cout << "Nhap id tap tin muon truy xuat: ";
+            cin >> id;
+            AccessFile(id, files);
+        }
+        else if (c == '0')
+        {
+            int id;
+            cout << "Nhap id thu muc muon truy xuat: ";
+            cin >> id;
+            AccessFolder(id, folders);
+        }
+        else if (n == 27) break;
+        else
+        {
+            cout << "Chon sai chuc nang!\n";
+        }
+    }
 }
 
