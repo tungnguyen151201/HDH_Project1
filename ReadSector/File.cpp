@@ -132,7 +132,7 @@ void AccessFile(int id, vector<File> files)
             PrintFile(files[i]);
             cout << "Noi dung tap tin: ";
             if (GetFileNameExtendsion(files[i].name) == "txt") cout << files[i].data << endl;
-            else cout << "Day khong phai file text.\n";
+            else cout << "Day khong phai file text. Vui long chon phan mem tuong thich de doc noi dung\n";
             cout << "-------------------------------------------------" << endl;
             return;
         }
