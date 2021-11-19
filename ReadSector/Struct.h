@@ -16,7 +16,7 @@ struct MFT
 };
 struct AttributeData
 {
-	string content;
+	string content;	
 };
 struct AttributeFileName
 {
@@ -41,10 +41,12 @@ struct Attribute
 struct MFTEntry
 {
 	int id;
+	__int64 idSector; //sector bắt đầu MFT entry
 	int type; //0: tập tin đã xóa, 1: tập tin được cấp phát, 2: thư mục đã xóa, 3: thư mục được cấp phát
 	BYTE sector1[512]; //nửa entry đầu
 	BYTE sector2[512]; //nửa entry cuối
 	vector<Attribute> attributes; //danh sách các Attribute
+	vector<__int64> sectors; //các sector mà data được lưu trữ
 };
 struct File
 {
@@ -53,7 +55,7 @@ struct File
 	int size;
 	string data;
 	int parentIndex;
-	bool isPrinted;
+	vector<__int64> sectors; //các sector lưu trữ
 };
 struct Folder
 {
@@ -62,5 +64,5 @@ struct Folder
 	vector<File> child;
 	vector<Folder> folderchild;
 	int parentIndex;
-	bool isPrinted;
+	vector<__int64> sectors; //các sector lưu trữ
 };

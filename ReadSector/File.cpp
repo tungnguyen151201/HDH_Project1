@@ -7,6 +7,7 @@ string GetFileNameExtendsion(string filename)
 void ReadFile(File& file, MFTEntry entry)
 {
     file.id = entry.id;
+    file.sectors = entry.sectors;
     for (int i = 0; i < entry.attributes.size(); i++)
     {
         if (entry.attributes[i].type == 48)
@@ -21,19 +22,29 @@ void ReadFile(File& file, MFTEntry entry)
         }
     }
 }
-void PrintFile(File& file)
+string ToString(vector<__int64> sectors)
 {
-    if (file.isPrinted == true) return;
+    string s = "";
+    for (int i = 0; i < sectors.size(); i++)
+    {
+        s += to_string(sectors[i]);
+        if (i != sectors.size() - 1) s += ", ";
+    }
+    return s;
+}
+void PrintFile(File file)
+{
     cout << "Ten tap tin: " << file.name << " | Kich thuoc: " << file.size << endl;
-    /*cout << "Noi dung tap tin: ";
+    cout << "Cac sector luu tru: " << ToString(file.sectors) << endl;
+    cout << "Noi dung tap tin: ";
     if (GetFileNameExtendsion(file.name) == "txt") cout << file.data << endl;
-    else cout << "Day khong phai file text.\n";*/
+    else cout << "Day khong phai file text.\n";
     cout << "-------------------------------------------------" << endl;
-    file.isPrinted = true;
 }
 void ReadFolder(Folder& folder, MFTEntry entry)
 {
     folder.id = entry.id;
+    folder.sectors = entry.sectors;
     for (int i = 0; i < entry.attributes.size(); i++)
     {
         if (entry.attributes[i].type == 48)
@@ -44,7 +55,7 @@ void ReadFolder(Folder& folder, MFTEntry entry)
     }
 }
 void ReadChildFolder(Folder& folder, vector<File> files) //đọc các tệp nằm trong thư mục
-{
+{   
     for (int i = 0; i < files.size(); i++)
     {
         if (files[i].parentIndex == folder.id)
@@ -63,11 +74,9 @@ void ReadFolderChild(Folder& folder, vector<Folder> folders) //đọc các thư 
         }
     }
 }
-void PrintFolder(Folder& folder)
+void PrintFolder(Folder folder)
 {
-    if (folder.isPrinted == true) return;
-    cout << "Ten thu muc: " << folder.name << endl;
-    folder.isPrinted = true;
+    cout << "Id: " << folder.id << " | Ten thu muc: " << folder.name << " | Cac sector luu tru: " << ToString(folder.sectors) << endl;
     for (int i = 0; i < folder.folderchild.size(); i++)
     {
         PrintFolder(folder.folderchild[i]);

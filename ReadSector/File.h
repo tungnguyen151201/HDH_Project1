@@ -2,8 +2,8 @@
 #include "Libraries.h"
 #include "MFTEntry.h"
 void ReadFile(File& file, MFTEntry entry);
-void PrintFile(File& file);
+void PrintFile(File file);
 void ReadFolder(Folder& folder, MFTEntry entry);
 void ReadChildFolder(Folder& folder, vector<File> files);
-void PrintFolder(Folder& folder);
+void PrintFolder(Folder folder);
 void PrintFolderTree(vector<MFTEntry> entries);

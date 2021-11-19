@@ -24,9 +24,12 @@ void ReadNTFS(LPCWSTR drive, BYTE sector[512])
     for (int i = 0; i < mft.lastMFTEntry; i++)
     {
         MFTEntry entry;
-        ReadMFTEntry(entry, mft.startClusterMFT * bpb.sectorPerCluster, i, drive);
-        entry.id = i;
-        entries.push_back(entry);
+        bool check = ReadMFTEntry(entry, mft.startClusterMFT * bpb.sectorPerCluster, i, drive);
+        if (check == true)
+        {
+            entry.id = i;
+            entries.push_back(entry);
+        }
         /*PrintMFTEntry(entry);
         cout << endl;*/
     }

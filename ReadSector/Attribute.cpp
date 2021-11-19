@@ -1,6 +1,6 @@
 ﻿#include "Attribute.h"
 #include <Windows.h>
-vector<Attribute> ReadAttributes(MFTEntry mftentry, int startAttr, LPCWSTR drive)
+vector<Attribute> ReadAttributes(MFTEntry& mftentry, int startAttr, LPCWSTR drive)
 {
     vector<Attribute> attributes;
     BYTE entry[1024];
@@ -40,11 +40,12 @@ vector<Attribute> ReadAttributes(MFTEntry mftentry, int startAttr, LPCWSTR drive
                 attribute.contentSize = ReadAttributeBytes(16, 4, array);
                 if (residentFlag == 0)
                 {
-                    attribute.Data.content = ReadValueAttributeBytes(attribute.startContentIndex, attribute.contentSize, array);
+                    attribute.Data.content = ReadValueAttributeBytes(attribute.startContentIndex, attribute.contentSize, array);                   
                 }
                 else
                 {
-                    attribute.Data.content = ReadDataNonResident(startAttr, array, attribute.type, drive, attribute.contentSize);
+                    if (startAttr > 512) mftentry.sectors.push_back(mftentry.idSector + (__int64)1);
+                    attribute.Data.content = ReadDataNonResident(mftentry, startAttr, array, attribute.type, drive, attribute.contentSize);
                 }
             }
         }
@@ -66,9 +67,10 @@ vector<Attribute> ReadAttributes(MFTEntry mftentry, int startAttr, LPCWSTR drive
         attribute.size = ReadAttributeBytes(startAttr + 4, 4, entry);
         attributes.push_back(attribute);
     }
+    if (startAttr > 512) mftentry.sectors.push_back(mftentry.idSector + (__int64)1);
     return attributes;
 }
-string ReadDataNonResident(int startAttr, BYTE attribute[1024], int typeAttribute, LPCWSTR drive, int& fileSize)
+string ReadDataNonResident(MFTEntry& mftentry, int startAttr, BYTE attribute[1024], int typeAttribute, LPCWSTR drive, int& fileSize)
 {
     string s = "";
     BYTE sector[512];
@@ -86,6 +88,7 @@ string ReadDataNonResident(int startAttr, BYTE attribute[1024], int typeAttribut
             for (int i = 0; i < sizeOfDataBlock * 8; i++)
             {
                 ReadSector(drive, readPointData + (__int64)i * (__int64)512, sector);
+                mftentry.sectors.push_back((readPointData + (__int64)i * (__int64)512) / (__int64)512);
                 s += ReadValueBytes("0", 512, sector);
             }
         }
@@ -100,7 +103,7 @@ int ReadBitmapNonResident(int startAttr, BYTE attribute[1024], int typeAttribute
 {
     string bitmap = "";
     BYTE sector[512];
-    int indexDataRun = 64; //Data Run đầu tiên
+    int indexDataRun = ReadAttributeBytes(32, 2, attribute); //Data Run đầu tiên
     string firstByte = ReadHexAttributeBytes(indexDataRun, 1, attribute);
     int firstHaftByte = firstByte[0] - '0';
     int secondHaftByte = firstByte[1] - '0';
